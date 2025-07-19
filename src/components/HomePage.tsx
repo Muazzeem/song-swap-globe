@@ -3,12 +3,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Send, Music, Play, ExternalLink, MapPin, Briefcase } from "lucide-react"
+import { Send, Music, Play, ExternalLink, MapPin, Briefcase, Menu, Share2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { FunFactModal } from "@/components/modals/FunFactModal"
+import { ShareModal } from "@/components/modals/ShareModal"
+import { DrawerMenu } from "@/components/DrawerMenu"
 
-export function HomePage() {
+interface HomePageProps {
+  onNavigate?: (page: string) => void
+}
+
+export function HomePage({ onNavigate }: HomePageProps) {
   const [musicLink, setMusicLink] = useState("")
   const [receivedSong, setReceivedSong] = useState(null)
+  const [showFunFact, setShowFunFact] = useState(false)
+  const [showShare, setShowShare] = useState(false)
   const { toast } = useToast()
 
   const handleSendSong = () => {
@@ -44,23 +53,39 @@ export function HomePage() {
     })
   }
 
+  const funFactData = {
+    title: "Did you know?",
+    description: "\"Blinding Lights\" by The Weeknd was the top charting song of Billboard Hot 100 history!",
+    source: "Billboard"
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 pb-24">
       <div className="max-w-md mx-auto space-y-6">
         
-        {/* Header */}
-        <div className="text-center pt-8 pb-4">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-2 rounded-lg bg-gradient-primary shadow-glow">
-              <Music className="h-6 w-6 text-white" />
+        {/* Header with Menu */}
+        <div className="flex items-center justify-between pt-8 pb-4">
+          <DrawerMenu onNavigate={onNavigate || (() => {})}>
+            <Button variant="ghost" size="sm" className="p-2">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </DrawerMenu>
+          
+          <div className="text-center flex-1">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <div className="p-2 rounded-lg bg-gradient-primary shadow-glow">
+                <Music className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                Music Bridge
+              </h1>
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Music Bridge
-            </h1>
+            <p className="text-muted-foreground">
+              Share a song, discover something new
+            </p>
           </div>
-          <p className="text-muted-foreground">
-            Share a song, discover something new
-          </p>
+          
+          <div className="w-10" /> {/* Spacer for alignment */}
         </div>
 
         {/* Send Song Section */}
@@ -138,38 +163,66 @@ export function HomePage() {
                   </div>
                 </div>
               </div>
-              
-              <div className="flex space-x-2">
-                <Button 
-                  onClick={handlePlaySong}
-                  className="flex-1 bg-primary/20 hover:bg-primary/30 text-primary hover:text-primary-glow"
-                  variant="outline"
-                >
-                  <Play className="mr-2 h-4 w-4" />
-                  Play in App
-                </Button>
-                
-                <Button 
-                  onClick={handlePlaySong}
-                  className="flex-1"
-                  variant="outline"
-                >
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Open Link
-                </Button>
-              </div>
-            </div>
-          </GlassCard>
-        )}
+               
+               <div className="flex space-x-2">
+                 <Button 
+                   onClick={handlePlaySong}
+                   className="flex-1 bg-primary/20 hover:bg-primary/30 text-primary hover:text-primary-glow"
+                   variant="outline"
+                 >
+                   <Play className="mr-2 h-4 w-4" />
+                   Play in App
+                 </Button>
+                 
+                 <Button 
+                   onClick={handlePlaySong}
+                   className="flex-1"
+                   variant="outline"
+                 >
+                   <ExternalLink className="mr-2 h-4 w-4" />
+                   Open Link
+                 </Button>
+                 
+                 <Button 
+                   onClick={() => setShowShare(true)}
+                   size="sm"
+                   variant="outline"
+                   className="px-3"
+                 >
+                   <Share2 className="h-4 w-4" />
+                 </Button>
+               </div>
+             </div>
+           </GlassCard>
+         )}
 
-        {/* Fun Fact */}
-        <GlassCard className="text-center">
-          <h3 className="font-semibold mb-2">🎵 Fun Fact</h3>
-          <p className="text-sm text-muted-foreground">
-            "Blinding Lights" by The Weeknd was the top charting song of Billboard Hot 100 history!
-          </p>
-        </GlassCard>
-      </div>
-    </div>
+         {/* Fun Fact - Clickable */}
+         <GlassCard 
+           className="text-center cursor-pointer hover:border-primary/30 transition-colors"
+           onClick={() => setShowFunFact(true)}
+         >
+           <h3 className="font-semibold mb-2">🎵 Fun Fact</h3>
+           <p className="text-sm text-muted-foreground">
+             "Blinding Lights" by The Weeknd was the top charting song of Billboard Hot 100 history!
+           </p>
+           <p className="text-xs text-primary mt-2">Tap to learn more</p>
+         </GlassCard>
+
+         {/* Modals */}
+         <FunFactModal 
+           isOpen={showFunFact}
+           onClose={() => setShowFunFact(false)}
+           fact={funFactData}
+         />
+         
+         {receivedSong && (
+           <ShareModal
+             isOpen={showShare}
+             onClose={() => setShowShare(false)}
+             song={receivedSong}
+           />
+         )}
+       </div>
+     </div>
   )
 }
