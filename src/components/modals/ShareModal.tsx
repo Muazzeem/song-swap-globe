@@ -24,15 +24,6 @@ export function ShareModal({ isOpen, onClose, song }: ShareModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-transparent border-0 p-4">
         <GlassCard className="relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="absolute right-2 top-2 h-8 w-8 p-0 hover:bg-white/10"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          
           <div className="pt-8 pb-4">
             <DialogHeader className="text-center space-y-4">
               <DialogTitle className="text-xl font-bold">
@@ -56,7 +47,7 @@ export function ShareModal({ isOpen, onClose, song }: ShareModalProps) {
               <div className="space-y-3">
                 <Button
                   onClick={() => handleShare('instagram')}
-                  className="w-full h-12 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                  className="w-full h-12 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
                 >
                   <Instagram className="mr-2 h-5 w-5" />
                   Instagram Story
@@ -71,13 +62,15 @@ export function ShareModal({ isOpen, onClose, song }: ShareModalProps) {
                 </Button>
               </div>
               
+             <div className="flex justify-end">
               <Button
-                variant="outline"
+                variant="ghost"
                 onClick={onClose}
-                className="w-full mt-4"
+                className="mt-4 bg-transparent text-primary hover:bg-primary/10 hover:text-primary-glow"
               >
                 Cancel
               </Button>
+            </div>
             </div>
           </div>
         </GlassCard>

@@ -2,6 +2,8 @@ import { GlassCard } from "@/components/ui/glass-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Play, Heart, Share2, MapPin, Briefcase } from "lucide-react"
+import { Navigation } from "@/components/Navigation"
+import { useState } from "react"
 
 const receivedSongs = [
   {
@@ -46,8 +48,18 @@ const receivedSongs = [
 ]
 
 export function LibraryPage() {
+  const [activeTab, setActiveTab] = useState("library")
+  const [currentPage, setCurrentPage] = useState("library")
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 pb-24">
+      <Navigation 
+                activeTab={currentPage} 
+                onTabChange={(tab) => {
+                  setActiveTab(tab)
+                  setCurrentPage(tab)
+                }} 
+              />
       <div className="max-w-md mx-auto space-y-6">
         
         {/* Header */}
@@ -137,3 +149,5 @@ export function LibraryPage() {
     </div>
   )
 }
+
+export default LibraryPage;

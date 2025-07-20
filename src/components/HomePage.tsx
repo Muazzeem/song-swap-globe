@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Send, Music, Play, ExternalLink, MapPin, Briefcase, Menu, Share2 } from "lucide-react"
+import { Send, Music, Play, ExternalLink, MapPin, Briefcase, Menu, Share2, Lightbulb } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { FunFactModal } from "@/components/modals/FunFactModal"
 import { ShareModal } from "@/components/modals/ShareModal"
@@ -65,11 +65,11 @@ export function HomePage({ onNavigate }: HomePageProps) {
         
         {/* Header with Menu */}
         <div className="flex items-center justify-between pt-8 pb-4">
-          <DrawerMenu onNavigate={onNavigate || (() => {})}>
+          {/* <DrawerMenu onNavigate={onNavigate || (() => {})}>
             <Button variant="ghost" size="sm" className="p-2">
               <Menu className="h-5 w-5" />
             </Button>
-          </DrawerMenu>
+          </DrawerMenu> */}
           
           <div className="text-center flex-1">
             <div className="flex items-center justify-center gap-3 mb-2">
@@ -77,7 +77,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <Music className="h-6 w-6 text-white" />
               </div>
               <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Music Bridge
+                Soundly
               </h1>
             </div>
             <p className="text-muted-foreground">
@@ -91,14 +91,14 @@ export function HomePage({ onNavigate }: HomePageProps) {
         {/* Send Song Section */}
         <GlassCard>
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
+            <h2 className="text-lg font-semibold flex items-center gap-2 text-white">
               <Send className="h-5 w-5 text-primary" />
-              Send a Song
+              <span className="text-primary">Send a Song</span>
             </h2>
             
             <div className="space-y-3">
               <Input
-                placeholder="Paste a music link (Spotify, YouTube, Apple Music, etc.)"
+                placeholder="Paste a music link from Spotify"
                 value={musicLink}
                 onChange={(e) => setMusicLink(e.target.value)}
                 className="h-12 bg-input/50 border-white/10 focus:border-primary/50"
@@ -107,7 +107,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <Button 
                 onClick={handleSendSong}
                 disabled={!musicLink.trim()}
-                className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all text-white duration-300"
               >
                 <Send className="mr-2 h-4 w-4" />
                 Send Song
@@ -124,9 +124,18 @@ export function HomePage({ onNavigate }: HomePageProps) {
         {receivedSong && (
           <GlassCard className="border-primary/20 bg-gradient-to-br from-card/90 to-primary/5">
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-primary">
-                New Song Received!
-              </h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-primary">
+                  New Song Received!
+                </h2>
+                <Button 
+                   size="sm"
+                   variant="outline"
+                   className="px-3 bg-gradient-primary hover:shadow-glow transition-all text-white duration-300"
+                 >
+                   <Play className="mr-0 h-4 w-4 cursor-pointer" />
+                 </Button>
+              </div>
               
               <div className="flex items-start space-x-4">
                 <img
@@ -166,12 +175,12 @@ export function HomePage({ onNavigate }: HomePageProps) {
                
                <div className="flex space-x-2">
                  <Button 
-                   onClick={handlePlaySong}
+                   onClick={() => setShowFunFact(true)}
                    className="flex-1 bg-primary/20 hover:bg-primary/30 text-primary hover:text-primary-glow"
                    variant="outline"
                  >
-                   <Play className="mr-2 h-4 w-4" />
-                   Play in App
+                   <Lightbulb className="mr-2 h-4 w-4" />
+                   Fun Fact
                  </Button>
                  
                  <Button 
@@ -193,20 +202,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
                  </Button>
                </div>
              </div>
-           </GlassCard>
+          </GlassCard>
          )}
-
-         {/* Fun Fact - Clickable */}
-         <GlassCard 
-           className="text-center cursor-pointer hover:border-primary/30 transition-colors"
-           onClick={() => setShowFunFact(true)}
-         >
-           <h3 className="font-semibold mb-2">🎵 Fun Fact</h3>
-           <p className="text-sm text-muted-foreground">
-             "Blinding Lights" by The Weeknd was the top charting song of Billboard Hot 100 history!
-           </p>
-           <p className="text-xs text-primary mt-2">Tap to learn more</p>
-         </GlassCard>
 
          {/* Modals */}
          <FunFactModal 

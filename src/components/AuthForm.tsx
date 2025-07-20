@@ -39,7 +39,7 @@ export function AuthForm({ onAuth }: AuthFormProps) {
               <Music className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Music Bridge
+              SoundlyBeats
             </h1>
           </div>
           <p className="text-xl text-muted-foreground max-w-md">
@@ -52,7 +52,7 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           <GlassCard>
             <div className="text-center mb-6">
               <h2 className="text-2xl font-semibold mb-2">
-                {isLogin ? "Welcome Back" : "Join Music Bridge"}
+                {isLogin ? "Welcome Back" : "Join SoundlyBeats"}
               </h2>
               <p className="text-muted-foreground">
                 {isLogin ? "Sign in to continue sharing music" : "Create your account to start"}
@@ -147,7 +147,7 @@ export function AuthForm({ onAuth }: AuthFormProps) {
             <div className="space-y-3">
               <Button 
                 variant="outline" 
-                className="w-full h-12 border-white/20 hover:bg-primary/10"
+                className="w-full h-12 border-white/20 hover:bg-primary/10 bg-red-500 hover:bg-red-600"
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
