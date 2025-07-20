@@ -7,7 +7,7 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, accessToken } = useAuth()
 
   if (isLoading) {
     return (
@@ -17,7 +17,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
     )
   }
 
-  if (!isAuthenticated) {
+  // Check both authentication status and token presence
+  if (!isAuthenticated || !accessToken) {
     return <AuthForm />
   }
 

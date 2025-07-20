@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,15 +5,18 @@ import { GlassCard } from "@/components/ui/glass-card"
 import { Music, Mail, Lock, User, Briefcase, MapPin, Globe } from "lucide-react"
 import { PasswordResetModal } from "@/components/modals/PasswordResetModal"
 import { useAuth } from "@/contexts/AuthContext"
+import { useToast } from "@/hooks/use-toast"
 
 export function AuthForm() {
   const { login, register, isLoading } = useAuth()
+  const { toast } = useToast()
   const [isLogin, setIsLogin] = useState(true)
   const [showPasswordReset, setShowPasswordReset] = useState(false)
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
+    password1: "",
+    password2: "",
     profession: "",
     country: "",
     city: ""
@@ -26,11 +28,41 @@ export function AuthForm() {
     try {
       if (isLogin) {
         await login(formData.email, formData.password)
+        toast({
+          title: "Success!",
+          description: "You've been logged in successfully.",
+        })
       } else {
-        await register(formData)
+        // Validation for registration
+        if (formData.password1 !== formData.password2) {
+          toast({
+            title: "Error",
+            description: "Passwords do not match.",
+            variant: "destructive"
+          })
+          return
+        }
+        
+        await register({
+          email: formData.email,
+          profession: formData.profession,
+          country: formData.country,
+          city: formData.city,
+          password1: formData.password1,
+          password2: formData.password2,
+        })
+        
+        toast({
+          title: "Success!",
+          description: "Account created successfully!",
+        })
       }
     } catch (error) {
-      console.error('Auth error:', error)
+      toast({
+        title: "Error",
+        description: isLogin ? "Login failed. Please check your credentials." : "Registration failed. Please try again.",
+        variant: "destructive"
+      })
     }
   }
 
@@ -74,22 +106,13 @@ export function AuthForm() {
                 {!isLogin && (
                   <>
                     <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Name"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange("name", e.target.value)}
-                        className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
-                      />
-                    </div>
-                    
-                    <div className="relative">
                       <Briefcase className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         placeholder="Profession"
                         value={formData.profession}
                         onChange={(e) => handleInputChange("profession", e.target.value)}
                         className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
+                        required
                       />
                     </div>
 
@@ -101,6 +124,7 @@ export function AuthForm() {
                           value={formData.country}
                           onChange={(e) => handleInputChange("country", e.target.value)}
                           className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
+                          required
                         />
                       </div>
                       <div className="relative">
@@ -110,6 +134,7 @@ export function AuthForm() {
                           value={formData.city}
                           onChange={(e) => handleInputChange("city", e.target.value)}
                           className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
+                          required
                         />
                       </div>
                     </div>
@@ -124,19 +149,48 @@ export function AuthForm() {
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
+                    required
                   />
                 </div>
 
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={(e) => handleInputChange("password", e.target.value)}
-                    className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
-                  />
-                </div>
+                {isLogin ? (
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={(e) => handleInputChange("password", e.target.value)}
+                      className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
+                      required
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="password"
+                        placeholder="Password"
+                        value={formData.password1}
+                        onChange={(e) => handleInputChange("password1", e.target.value)}
+                        className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
+                        required
+                      />
+                    </div>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={formData.password2}
+                        onChange={(e) => handleInputChange("password2", e.target.value)}
+                        className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
+                        required
+                      />
+                    </div>
+                  </>
+                )}
 
                 {isLogin && (
                   <div className="text-right">
