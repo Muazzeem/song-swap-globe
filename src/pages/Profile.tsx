@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,22 +7,28 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { Edit, Camera, Bell, Lock, HelpCircle, LogOut, Trash2 } from "lucide-react"
 import { Navigation } from "@/components/Navigation"
+import { useAuth } from "@/contexts/AuthContext"
 
 export function ProfilePage() {
+  const { user, logout } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [notifications, setNotifications] = useState(true)
   const [activeTab, setActiveTab] = useState("home")
   const [currentPage, setCurrentPage] = useState("home")
   const [profile, setProfile] = useState({
-    name: "Your Name",
-    profession: "Developer",
-    country: "Portugal",
-    city: "Lisbon",
-    email: "your@email.com"
+    name: user?.name || "Your Name",
+    profession: user?.profession || "Developer",
+    country: user?.country || "Portugal",
+    city: user?.city || "Lisbon",
+    email: user?.email || "your@email.com"
   })
 
   const handleSave = () => {
     setIsEditing(false)
+  }
+
+  const handleLogout = () => {
+    logout()
   }
 
   return (
@@ -66,7 +73,7 @@ export function ProfilePage() {
                 <Avatar className="h-14 w-14">
                   <AvatarImage src="" />
                   <AvatarFallback className="text-base bg-gradient-primary text-white">
-                    YN
+                    {profile.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 {isEditing && (
@@ -195,7 +202,11 @@ export function ProfilePage() {
             <h2 className="text-lg font-semibold text-destructive">Account Actions</h2>
             
             <div className="grid grid-cols-1 gap-2">
-              <Button variant="outline" className="w-full justify-start h-9 text-sm">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start h-9 text-sm"
+                onClick={handleLogout}
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
               </Button>
