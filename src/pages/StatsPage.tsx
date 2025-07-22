@@ -1,3 +1,4 @@
+
 import { GlassCard } from "@/components/ui/glass-card"
 import { Progress } from "@/components/ui/progress"
 import { Globe, Music, Users, TrendingUp } from "lucide-react"
@@ -39,113 +40,151 @@ export function StatsPage() {
                 setCurrentPage(tab)
               }} 
             />
-      <div className="max-w-md mx-auto space-y-6">
+      
+      {/* Container with responsive max-width */}
+      <div className="max-w-7xl mx-auto">
         
         {/* Header */}
-        <div className="pt-8 pb-4">
-          <h1 className="text-2xl font-bold mb-2">Your Stats</h1>
-          <p className="text-muted-foreground">
+        <div className="pt-8 pb-6 text-center lg:text-left">
+          <h1 className="text-3xl lg:text-4xl font-bold mb-3">Your Stats</h1>
+          <p className="text-muted-foreground text-lg">
             Your musical journey around the world
           </p>
         </div>
 
-        {/* Main Stats */}
-        <div className="grid grid-cols-2 gap-4">
-          <GlassCard className="text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Music className="h-5 w-5 text-primary" />
+        {/* Main Stats - Always on top, responsive grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+          <GlassCard className="text-center p-6">
+            <div className="flex items-center justify-center mb-3">
+              <Music className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
-            <div className="text-2xl font-bold text-primary">24</div>
-            <div className="text-xs text-muted-foreground">Songs Shared</div>
+            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">24</div>
+            <div className="text-sm text-muted-foreground">Songs Shared</div>
           </GlassCard>
           
-          <GlassCard className="text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Users className="h-5 w-5 text-primary" />
+          <GlassCard className="text-center p-6">
+            <div className="flex items-center justify-center mb-3">
+              <Users className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
-            <div className="text-2xl font-bold text-primary">20</div>
-            <div className="text-xs text-muted-foreground">People Connected</div>
+            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">20</div>
+            <div className="text-sm text-muted-foreground">People Connected</div>
+          </GlassCard>
+
+          <GlassCard className="text-center p-6">
+            <div className="flex items-center justify-center mb-3">
+              <Globe className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
+            </div>
+            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">4</div>
+            <div className="text-sm text-muted-foreground">Countries</div>
+          </GlassCard>
+
+          <GlassCard className="text-center p-6 border-primary/20 bg-gradient-to-br from-card/90 to-primary/5">
+            <div className="text-3xl lg:text-4xl mb-2">🌍</div>
+            <h3 className="font-semibold text-primary text-sm lg:text-base">Global Explorer</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              4 countries explored!
+            </p>
           </GlassCard>
         </div>
 
-        {/* Countries */}
-        <GlassCard>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Globe className="h-5 w-5 text-primary" />
-                Total Countries: 4
-              </h2>
-            </div>
-            
-            <div className="text-sm text-muted-foreground mb-3">
-              Portugal, USA, Japan, Germany
-            </div>
-            
-            <div className="space-y-3">
-              {countryStats.map((stat, index) => (
-                <div key={stat.country} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <span>{stat.flag}</span>
-                    <span className="text-sm">{stat.country}</span>
-                  </div>
-                  <span className="text-sm font-medium">{stat.count}</span>
+        {/* Content Grid - Two columns on larger screens */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Countries */}
+            <GlassCard className="p-6">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold flex items-center gap-3">
+                    <Globe className="h-6 w-6 text-primary" />
+                    Countries Explored
+                  </h2>
                 </div>
-              ))}
-            </div>
-          </div>
-        </GlassCard>
-
-        {/* Top Genres */}
-        <GlassCard>
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Most Frequent Genres
-            </h2>
-            
-            <div className="space-y-3">
-              {topGenres.map((genre) => (
-                <div key={genre.genre} className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>{genre.genre}</span>
-                    <span className="text-muted-foreground">{genre.count} songs</span>
-                  </div>
-                  <Progress value={genre.percentage} className="h-2" />
+                
+                <div className="text-muted-foreground mb-4">
+                  Portugal, USA, Japan, Germany, Brazil
                 </div>
-              ))}
-            </div>
-          </div>
-        </GlassCard>
+                
+                <div className="space-y-4">
+                  {countryStats.map((stat, index) => (
+                    <div key={stat.country} className="flex items-center justify-between p-3 rounded-lg bg-muted/20 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-2xl">{stat.flag}</span>
+                        <span className="font-medium">{stat.country}</span>
+                      </div>
+                      <span className="font-semibold text-primary">{stat.count} songs</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </GlassCard>
 
-        {/* Recent Locations */}
-        <GlassCard>
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Received From:</h2>
-            
-            <div className="space-y-2">
-              {recentLocations.map((location, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                    <span className="text-sm">{location.city}, {location.country}</span>
+            {/* Recent Locations */}
+            <GlassCard className="p-6">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold">Recent Connections</h2>
+                
+                <div className="space-y-3">
+                  {recentLocations.map((location, index) => (
+                    <div key={index} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+                        <span>{location.city}, {location.country}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Top Genres */}
+            <GlassCard className="p-6">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold flex items-center gap-3">
+                  <TrendingUp className="h-6 w-6 text-primary" />
+                  Popular Genres
+                </h2>
+                
+                <div className="space-y-4">
+                  {topGenres.map((genre) => (
+                    <div key={genre.genre} className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{genre.genre}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">{genre.count} songs</span>
+                          <span className="text-sm font-medium text-primary">{genre.percentage}%</span>
+                        </div>
+                      </div>
+                      <Progress value={genre.percentage} className="h-3" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </GlassCard>
+
+            {/* Additional stats card */}
+            <GlassCard className="p-6 text-center bg-gradient-to-br from-card/90 to-accent/10">
+              <div className="space-y-4">
+                <div className="text-4xl">🎵</div>
+                <h3 className="text-xl font-semibold">Music Diversity</h3>
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div>
+                    <div className="text-2xl font-bold text-primary">4</div>
+                    <div className="text-sm text-muted-foreground">Genres</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-primary">20</div>
+                    <div className="text-sm text-muted-foreground">Artists</div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            </GlassCard>
           </div>
-        </GlassCard>
-
-        {/* Achievement */}
-        <GlassCard className="text-center border-primary/20 bg-gradient-to-br from-card/90 to-primary/5">
-          <div className="space-y-2">
-            <div className="text-2xl">🌍</div>
-            <h3 className="font-semibold text-primary">Global Explorer</h3>
-            <p className="text-xs text-muted-foreground">
-              You've connected with people from 4 different countries!
-            </p>
-          </div>
-        </GlassCard>
+        </div>
       </div>
     </div>
   )
