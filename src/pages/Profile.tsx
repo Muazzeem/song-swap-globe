@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch"
 import { Edit, Camera, Bell, Lock, HelpCircle, LogOut, Trash2, Loader2 } from "lucide-react"
 import { Navigation } from "@/components/Navigation"
 import { useAuth } from "@/contexts/AuthContext"
+import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal"
 
 export function ProfilePage() {
   const { user, logout, accessToken } = useAuth()
@@ -16,6 +17,7 @@ export function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState("")
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
   
   const [profile, setProfile] = useState({
     uid: "",
@@ -328,7 +330,11 @@ export function ProfilePage() {
               </div>
 
               <div className="space-y-1 pt-1">
-                <Button variant="outline" className="w-full justify-start h-9 text-sm">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start h-9 text-sm"
+                  onClick={() => setShowChangePasswordModal(true)}
+                >
                   <Lock className="h-4 w-4 mr-2" />
                   Change Password
                 </Button>
@@ -383,6 +389,11 @@ export function ProfilePage() {
           </div>
         </GlassCard>
       </div>
+
+      <ChangePasswordModal 
+        open={showChangePasswordModal}
+        onOpenChange={setShowChangePasswordModal}
+      />
     </div>
   )
 }
