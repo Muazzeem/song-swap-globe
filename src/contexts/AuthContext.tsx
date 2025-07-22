@@ -2,6 +2,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 
 interface User {
+  city: string
+  country: string
+  profession: string
+  name: string
   pk: number
   email: string
   first_name: string
@@ -36,7 +40,7 @@ interface RegisterData {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // Replace with your actual API URL
-const API_BASE_URL = 'YOUR_API_URL_HERE' // You'll need to replace this with your actual API URL
+const API_BASE_URL = 'http://localhost:8000' // You'll need to replace this with your actual API URL
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)

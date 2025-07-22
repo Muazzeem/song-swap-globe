@@ -1,6 +1,6 @@
 
 // Utility for making authenticated API requests
-const API_BASE_URL = 'YOUR_API_URL_HERE' // Replace with your actual API URL
+const API_BASE_URL = 'http://localhost:8000' // Replace with your actual API URL
 
 export const makeAuthenticatedRequest = async (
   endpoint: string,

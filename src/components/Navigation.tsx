@@ -1,5 +1,6 @@
 import { Home, Library, BarChart3, User, Bell, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Link } from "react-router-dom"
 
 interface NavigationProps {
   activeTab: string
@@ -12,17 +13,16 @@ interface NavigationProps {
 }
 
 const navItems = [
-  { id: "home", label: "Dashboard", icon: Home },
-  { id: "library", label: "Library", icon: Library },
-  { id: "stats", label: "Stats", icon: BarChart3 },
-  { id: "profile", label: "Profile", icon: User },
+  { id: "dashboard", label: "Dashboard", icon: Home, to: "/dashboard" },
+  { id: "library", label: "Library", icon: Library, to: "/library" },
+  { id: "stats", label: "Stats", icon: BarChart3, to: "/stats" },
+  { id: "profile", label: "Profile", icon: User, to: "/profile" },
 ]
 
 export function Navigation({ 
   activeTab, 
   onTabChange,
-  brandName = "MyApp",
-  userName = "John Doe",
+  brandName = "Soundly",
   userAvatar,
   onNotificationClick,
   onSettingsClick
@@ -38,21 +38,25 @@ export function Navigation({
         </div>
 
         <div className="flex justify-center space-x-1">
-          {navItems.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => onTabChange(id)}
-              className={cn(
-                "flex flex-col items-center space-y-1 px-3 py-2 rounded-lg transition-all duration-200",
-                activeTab === id
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Icon className="h-5 w-5" />
-              <span className="text-xs font-medium hidden sm:block">{label}</span>
-            </button>
-          ))}
+          {navItems.map(({ id, label, icon: Icon, to }) => {
+            const isActive = location.pathname === to
+
+            return (
+              <Link
+                key={id}
+                to={to}
+                className={cn(
+                  "flex flex-col items-center space-y-1 px-3 py-2 rounded-lg transition-all duration-200",
+                  isActive
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="text-xs font-medium hidden sm:block">{label}</span>
+              </Link>
+            )
+          })}
         </div>
 
         {/* User Section - Right Side */}
@@ -74,11 +78,12 @@ export function Navigation({
           </button>
 
           {/* User Avatar and Name */}
-          <div className="flex items-center space-x-2 pl-2 border-l border-white/10">
+          <Link to='/profile'>
+          
+          <div className="flex items-center space-x-2 pl-2 border-l border-white/10 cursor-pointer">
             {userAvatar ? (
               <img
                 src={userAvatar}
-                alt={userName}
                 className="w-8 h-8 rounded-full object-cover"
               />
             ) : (
@@ -86,8 +91,8 @@ export function Navigation({
                 <User className="h-4 w-4 text-primary" />
               </div>
             )}
-            <span className="text-sm font-medium text-foreground hidden md:block">{userName}</span>
           </div>
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,6 +1,8 @@
 import { GlassCard } from "@/components/ui/glass-card"
 import { Progress } from "@/components/ui/progress"
 import { Globe, Music, Users, TrendingUp } from "lucide-react"
+import { Navigation } from "@/components/Navigation"
+import { useState } from "react"
 
 const countryStats = [
   { country: "Portugal", flag: "🇵🇹", count: 4 },
@@ -26,8 +28,17 @@ const recentLocations = [
 ]
 
 export function StatsPage() {
+    const [activeTab, setActiveTab] = useState("stats")
+    const [currentPage, setCurrentPage] = useState("stats")
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 pb-24 pt-24">
+      <Navigation 
+              activeTab={currentPage} 
+              onTabChange={(tab) => {
+                setActiveTab(tab)
+                setCurrentPage(tab)
+              }} 
+            />
       <div className="max-w-md mx-auto space-y-6">
         
         {/* Header */}
