@@ -175,7 +175,7 @@ export function ProfilePage() {
       />
       
       {/* Container with responsive max-width */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         
         {/* Header */}
         <div className="pt-8 pb-6 text-center lg:text-left">
@@ -365,25 +365,12 @@ export function ProfilePage() {
 
           {/* Right Column */}
           <div className="space-y-6 lg:space-y-8">
-            {/* Premium */}
-            <GlassCard className="border-primary/20 bg-gradient-to-br from-card/90 to-primary/5 p-6">
-              <div className="text-center space-y-4">
-                <div className="text-4xl">⭐</div>
-                <h3 className="text-xl font-semibold text-primary">Upgrade to Premium</h3>
-                <p className="text-sm text-muted-foreground">
-                  Get priority matching and see song history from all users
-                </p>
-                <Button className="w-full bg-gradient-primary h-10 text-white">
-                  Subscribe
-                </Button>
-              </div>
-            </GlassCard>
 
             {/* Account Stats */}
             <GlassCard className="p-6">
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold">Account Activity</h2>
-                
+
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div className="p-4 rounded-lg bg-muted/20">
                     <div className="text-2xl font-bold text-primary">24</div>
@@ -405,28 +392,42 @@ export function ProfilePage() {
               </div>
             </GlassCard>
 
+            {/* Premium */}
+            <GlassCard className="border-primary/20 bg-gradient-to-br from-card/90 to-primary/5 p-6">
+              <div className="text-center space-y-4">
+                <div className="text-4xl">⭐</div>
+                <h3 className="text-xl font-semibold text-primary">Upgrade to Premium</h3>
+                <p className="text-sm text-muted-foreground">
+                  Get priority matching and see song history from all users
+                </p>
+                <Button className="w-full bg-gradient-primary h-10 text-white">
+                  Subscribe
+                </Button>
+              </div>
+            </GlassCard>
+
             {/* Danger Zone */}
-            <GlassCard className="border-destructive/20 p-6">
+            {/* <GlassCard className="border-destructive/20 p-6">
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-destructive">Account Actions</h2>
-                
+
                 <div className="space-y-3">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full justify-start h-10"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4 mr-3" />
                     Sign Out
                   </Button>
-                  
+
                   <Button variant="destructive" className="w-full justify-start h-10">
                     <Trash2 className="h-4 w-4 mr-3" />
                     Delete Account
                   </Button>
                 </div>
               </div>
-            </GlassCard>
+            </GlassCard> */}
           </div>
         </div>
       </div>

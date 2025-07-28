@@ -105,7 +105,7 @@ export function LibraryPage() {
             setCurrentPage(tab)
           }} 
         />
-        <div className="max-w-7xl mx-auto flex items-center justify-center h-64">
+        <div className="max-w-5xl mx-auto flex items-center justify-center h-64">
           <div className="flex items-center space-x-2">
             <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
             <span className="text-white">Loading your library...</span>
@@ -125,7 +125,7 @@ export function LibraryPage() {
             setCurrentPage(tab)
           }} 
         />
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <GlassCard className="text-center text-red-400 max-w-md mx-auto">
             <p>Error loading songs: {error}</p>
             <Button 
@@ -152,7 +152,7 @@ export function LibraryPage() {
       />
       
       {/* Container with responsive max-width */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         
         {/* Header */}
         <div className="pt-8 pb-6 text-center lg:text-left">

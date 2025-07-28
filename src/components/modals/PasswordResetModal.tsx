@@ -71,7 +71,7 @@ export function PasswordResetModal({ isOpen, onClose }: PasswordResetModalProps)
                 <div className="space-y-3">
                   <Button 
                     type="submit" 
-                    className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                    className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300 text-white"
                     disabled={isLoading}
                   >
                     {isLoading ? "Sending..." : "Send Reset Link"}

@@ -42,7 +42,7 @@ export function StatsPage() {
             />
       
       {/* Container with responsive max-width */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         
         {/* Header */}
         <div className="pt-8 pb-6 text-center lg:text-left">

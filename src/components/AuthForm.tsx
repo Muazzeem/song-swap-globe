@@ -206,7 +206,7 @@ export function AuthForm() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                  className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300 text-white"
                   disabled={isLoading}
                 >
                   {isLoading ? "Loading..." : (isLogin ? "Login" : "Register")}
