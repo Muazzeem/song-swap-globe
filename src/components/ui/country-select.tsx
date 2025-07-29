@@ -7,7 +7,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
@@ -17,13 +16,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useCountries } from "@/hooks/useCountries"
-
-interface Country {
-  name: string
-  alpha_2: string
-  alpha_3: string
-  flag_url: string
-}
 
 interface CountrySelectProps {
   value?: string
@@ -39,13 +31,9 @@ export function CountrySelect({
   className
 }: CountrySelectProps) {
   const [open, setOpen] = React.useState(false)
-  const { countries, isLoading, searchCountries } = useCountries()
+  const { countries, isLoading } = useCountries()
 
-  const selectedCountry = countries.find((country) => country.alpha_3 === value)
-
-  const handleSearch = (searchValue: string) => {
-    searchCountries(searchValue)
-  }
+  const selectedCountry = countries.find((country) => country.name === value)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -81,10 +69,6 @@ export function CountrySelect({
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">
         <Command>
-          <CommandInput
-            placeholder="Search countries..."
-            onValueChange={handleSearch}
-          />
           <CommandList>
             <CommandEmpty>
               {isLoading ? "Loading..." : "No country found."}
@@ -93,7 +77,7 @@ export function CountrySelect({
               {countries.map((country) => (
                 <CommandItem
                   key={country.alpha_3}
-                  value={country.alpha_3}
+                  value={country.name}
                   onSelect={(currentValue) => {
                     onValueChange?.(currentValue === value ? "" : currentValue)
                     setOpen(false)
@@ -110,7 +94,7 @@ export function CountrySelect({
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      value === country.alpha_3 ? "opacity-100" : "opacity-0"
+                      value === country.name ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

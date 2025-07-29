@@ -116,7 +116,6 @@ export function StatsPage() {
           </p>
         </div>
 
-        {/* Main Stats - Always on top, responsive grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
           <GlassCard className="text-center p-6">
             <div className="flex items-center justify-center mb-3">

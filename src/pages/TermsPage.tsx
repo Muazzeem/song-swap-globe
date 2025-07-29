@@ -4,8 +4,11 @@ import { GlassCard } from "@/components/ui/glass-card"
 
 const TermsPage = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-background p-4 pb-24 pt-24">
+      <Navigation
+        activeTab="profile"
+        onTabChange={(tab) => { }}
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <GlassCard className="p-8">
           <div className="space-y-8">
@@ -14,7 +17,11 @@ const TermsPage = () => {
                 Terms and Conditions
               </h1>
               <p className="text-muted-foreground">
-                Last updated: {new Date().toLocaleDateString()}
+                Last updated: {new Date().toLocaleDateString('en-US', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })}
               </p>
             </div>
 

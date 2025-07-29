@@ -1,11 +1,12 @@
 import { GlassCard } from "@/components/ui/glass-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Play, Heart, Share2, MapPin, Briefcase, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
+import { Play, Heart, Share2, MapPin, Briefcase, Loader2, ChevronLeft, ChevronRight, Music, Users, Globe } from "lucide-react"
 import { Navigation } from "@/components/Navigation"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { ShareModal } from "@/components/modals/ShareModal"
+import { useStatistics } from "@/hooks/useStatistics"
 
 export function LibraryPage() {
   const [activeTab, setActiveTab] = useState("library")
@@ -24,6 +25,7 @@ export function LibraryPage() {
   const [likedSongs, setLikedSongs] = useState(new Set())
   
   const { isAuthenticated, accessToken } = useAuth()
+  const { data: stats, isLoading } = useStatistics()
   
   const fetchSongs = async (url = null) => {
     try {
@@ -166,33 +168,40 @@ export function LibraryPage() {
         {/* Stats Cards - Always on top, responsive grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
           <GlassCard className="text-center p-6">
-            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">{pagination.count}</div>
-            <div className="text-sm text-muted-foreground">Songs Received</div>
-          </GlassCard>
-          
-          <GlassCard className="text-center p-6">
-            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
-              {new Set(receivedSongs.map(song => 
-                song.received_song?.genre?.[0] || 'Unknown'
-              )).size}
+            <div className="flex items-center justify-center mb-3">
+              <Music className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
-            <div className="text-sm text-muted-foreground">Genres</div>
+            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
+              {stats.songs_received}
+            </div>
+            <div className="text-sm text-muted-foreground">Songs Received</div>
           </GlassCard>
 
           <GlassCard className="text-center p-6">
+            <div className="flex items-center justify-center mb-3">
+              <Users className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
+            </div>
             <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
-              {new Set(receivedSongs.map(song => 
-                song.received_song?.uploader?.country || 'Unknown'
-              )).size}
+              {stats.users_exchanged_with}
+            </div>
+            <div className="text-sm text-muted-foreground">People Connected</div>
+          </GlassCard>
+
+          <GlassCard className="text-center p-6">
+            <div className="flex items-center justify-center mb-3">
+              <Globe className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
+            </div>
+            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
+              {stats.countries_involved}
             </div>
             <div className="text-sm text-muted-foreground">Countries</div>
           </GlassCard>
 
           <GlassCard className="text-center p-6 border-primary/20 bg-gradient-to-br from-card/90 to-primary/5">
-            <div className="text-3xl lg:text-4xl mb-2">🎵</div>
-            <h3 className="font-semibold text-primary text-sm lg:text-base">Music Explorer</h3>
+            <div className="text-3xl lg:text-4xl mb-2">🌍</div>
+            <h3 className="font-semibold text-primary text-sm lg:text-base">Global Explorer</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Global collection!
+              {stats.countries_involved} countries explored!
             </p>
           </GlassCard>
         </div>

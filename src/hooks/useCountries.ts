@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 
 interface Country {
   name: string
@@ -12,14 +11,12 @@ interface Country {
 export function useCountries() {
   const [countries, setCountries] = useState<Country[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const { accessToken } = useAuth()
 
   const searchCountries = async (query: string = '') => {
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/countries?search=${query}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/countries?search=${query}`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       })

@@ -6,11 +6,12 @@ import { GlassCard } from "@/components/ui/glass-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { CountrySelect } from "@/components/ui/country-select"
-import { Edit, Camera, Bell, Lock, HelpCircle, LogOut, Trash2, Loader2 } from "lucide-react"
+import { Edit, Camera, Bell, Lock, HelpCircle, LogOut, Trash2, Loader2, Info } from "lucide-react"
 import { Navigation } from "@/components/Navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal"
 import AccountState from "@/components/AccoutState"
+import { useNavigate } from "react-router-dom"
 
 export function ProfilePage() {
   const { user, logout, accessToken } = useAuth()
@@ -21,6 +22,7 @@ export function ProfilePage() {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState("")
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
+  const navigate = useNavigate();
   
   const [profile, setProfile] = useState({
     uid: "",
@@ -350,17 +352,50 @@ export function ProfilePage() {
                       <Lock className="h-4 w-4 mr-3" />
                       Change Password
                     </Button>
-
-                    <Button variant="outline" className="w-full justify-start h-10">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start h-10"
+                      onClick={() => navigate('/about')}
+                    >
+                      <Info className="h-4 w-4 mr-3" />
+                      About Us
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start h-10"
+                      onClick={() => navigate('/terms')}
+                    >
                       <HelpCircle className="h-4 w-4 mr-3" />
                       Terms & Conditions
                     </Button>
-
-                    <Button variant="outline" className="w-full justify-start h-10">
+                    <Button variant="outline" className="w-full justify-start h-10"
+                      onClick={() => navigate('/privacy')}
+                    >
                       <HelpCircle className="h-4 w-4 mr-3" />
                       Privacy Policy
                     </Button>
                   </div>
+                </div>
+              </div>
+            </GlassCard>
+            <GlassCard className="border-destructive/20 p-6 mt-5">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-destructive">Account Actions</h2>
+
+                <div className="space-y-3">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start h-10"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4 mr-3" />
+                    Sign Out
+                  </Button>
+
+                  <Button variant="destructive" className="w-full justify-start h-10">
+                    <Trash2 className="h-4 w-4 mr-3" />
+                    Delete Account
+                  </Button>
                 </div>
               </div>
             </GlassCard>
@@ -385,29 +420,6 @@ export function ProfilePage() {
                 </Button>
               </div>
             </GlassCard>
-
-            {/* Danger Zone */}
-            {/* <GlassCard className="border-destructive/20 p-6">
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-destructive">Account Actions</h2>
-
-                <div className="space-y-3">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start h-10"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4 mr-3" />
-                    Sign Out
-                  </Button>
-
-                  <Button variant="destructive" className="w-full justify-start h-10">
-                    <Trash2 className="h-4 w-4 mr-3" />
-                    Delete Account
-                  </Button>
-                </div>
-              </div>
-            </GlassCard> */}
           </div>
         </div>
       </div>
