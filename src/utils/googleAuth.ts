@@ -1,4 +1,12 @@
+
 import { jwtDecode } from 'jwt-decode';
+
+// Extend the Window interface to include google
+declare global {
+    interface Window {
+        google: any;
+    }
+}
 
 export interface GoogleUser {
     nbf: any;

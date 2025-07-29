@@ -1,20 +1,20 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { GoogleIdentityManager, GoogleCredentialResponse } from '@/utils/googleAuth';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CustomGoogleButtonProps {
-    onSuccess: (userData: any) => void;
     disabled?: boolean;
 }
 
 const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({
-    onSuccess,
     disabled = false
 }) => {
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
-
+    const { googleLogin } = useAuth();
 
     const handleGoogleLogin = async () => {
         if (loading) return;
@@ -102,7 +102,14 @@ const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({
             }
 
             const userData = await apiResponse.json();
-            onSuccess(userData);
+            
+            // Use the googleLogin method from AuthContext to store the response
+            googleLogin(userData);
+
+            toast({
+                title: "Login Successful",
+                description: "You have been logged in successfully!",
+            });
 
         } catch (error) {
             console.error('Google login error:', error);
@@ -115,10 +122,11 @@ const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({
             setLoading(false);
         }
     };
+
     return (
         <Button
-        onClick={handleGoogleLogin}
-        disabled={disabled || loading}
+            onClick={handleGoogleLogin}
+            disabled={disabled || loading}
             variant="outline"
             className="w-full h-12 border-white/20 hover:bg-primary/10 bg-red-500 hover:bg-red-600"
         >

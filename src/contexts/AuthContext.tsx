@@ -2,14 +2,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 
 interface User {
-  city: string
-  country: string
-  profession: string
-  name: string
-  pk: number
+  city?: string
+  country?: string
+  profession?: string
+  name?: string
+  pk?: number
   email: string
-  first_name: string
-  last_name: string
+  first_name?: string
+  last_name?: string
+  id?: number // Add id field for Google login response
 }
 
 interface AuthResponse {
@@ -24,6 +25,7 @@ interface AuthContextType {
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
   register: (userData: RegisterData) => Promise<void>
+  googleLogin: (userData: AuthResponse) => void
   logout: () => void
   accessToken: string | null
 }
@@ -135,6 +137,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const googleLogin = (userData: AuthResponse) => {
+    // Store tokens and user data from Google login response
+    localStorage.setItem('access_token', userData.access)
+    localStorage.setItem('refresh_token', userData.refresh)
+    localStorage.setItem('user_data', JSON.stringify(userData.user))
+    
+    setAccessToken(userData.access)
+    setUser(userData.user)
+  }
+
   const logout = () => {
     // Clear all stored data
     localStorage.removeItem('access_token')
@@ -152,6 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       login,
       register,
+      googleLogin,
       logout,
       accessToken
     }}>
