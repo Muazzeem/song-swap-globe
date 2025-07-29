@@ -11,6 +11,7 @@ export function LibraryPage() {
   const [activeTab, setActiveTab] = useState("library")
   const [currentPage, setCurrentPage] = useState("library")
   const [receivedSongs, setReceivedSongs] = useState([])
+  const [selectedSong, setSelectedSong] = useState(null)
   const [showShare, setShowShare] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -286,7 +287,10 @@ export function LibraryPage() {
                         </Button>
                         
                         <Button 
-                          onClick={() => setShowShare(true)}
+                          onClick={() => {
+                            setSelectedSong(song)
+                            setShowShare(true)
+                          }}
                           size="sm"
                           variant="outline"
                           className="bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
@@ -337,7 +341,11 @@ export function LibraryPage() {
       <ShareModal
         isOpen={showShare}
         onClose={() => setShowShare(false)}
-        song={{ title: "receivedSong.title", artist: "receivedSong.artist", cover: "receivedSong.cover_image_url" }}
+        song={{
+          title: selectedSong?.title,
+          artist: selectedSong?.artist,
+          cover: selectedSong?.cover_image_url
+        }}
       />
     </div>
   )

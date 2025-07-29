@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface StatisticsData {
+  songs_received: number
   songs_shared: number
   users_exchanged_with: number
   countries_involved: number
@@ -42,7 +43,7 @@ interface StatisticsData {
 }
 
 const fetchStatistics = async (token: string): Promise<StatisticsData> => {
-  const response = await fetch('/api/statistics', {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/statistics`, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -52,7 +53,7 @@ const fetchStatistics = async (token: string): Promise<StatisticsData> => {
   if (!response.ok) {
     throw new Error('Failed to fetch statistics')
   }
-
+  console.log(response)
   return response.json()
 }
 

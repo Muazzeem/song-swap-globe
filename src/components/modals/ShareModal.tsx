@@ -27,7 +27,7 @@ export function ShareModal({ isOpen, onClose, song }: ShareModalProps) {
           <div className="pt-8 pb-4">
             <DialogHeader className="text-center space-y-4">
               <DialogTitle className="text-xl font-bold">
-                Share
+                Share <i>{song.title}</i>
               </DialogTitle>
             </DialogHeader>
             
@@ -36,7 +36,7 @@ export function ShareModal({ isOpen, onClose, song }: ShareModalProps) {
                 <img
                   src={song.cover}
                   alt={song.title}
-                  className="w-16 h-16 rounded-lg mx-auto object-cover"
+                  className="w-20 h-20 rounded-lg mx-auto object-cover"
                 />
                 <div>
                   <h3 className="font-semibold">{song.title}</h3>

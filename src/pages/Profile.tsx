@@ -8,6 +8,7 @@ import { Edit, Camera, Bell, Lock, HelpCircle, LogOut, Trash2, Loader2 } from "l
 import { Navigation } from "@/components/Navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal"
+import AccountState from "@/components/AccoutState"
 
 export function ProfilePage() {
   const { user, logout, accessToken } = useAuth()
@@ -367,30 +368,7 @@ export function ProfilePage() {
           <div className="space-y-6 lg:space-y-8">
 
             {/* Account Stats */}
-            <GlassCard className="p-6">
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold">Account Activity</h2>
-
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div className="p-4 rounded-lg bg-muted/20">
-                    <div className="text-2xl font-bold text-primary">24</div>
-                    <div className="text-sm text-muted-foreground">Songs Shared</div>
-                  </div>
-                  <div className="p-4 rounded-lg bg-muted/20">
-                    <div className="text-2xl font-bold text-primary">12</div>
-                    <div className="text-sm text-muted-foreground">Connections</div>
-                  </div>
-                  <div className="p-4 rounded-lg bg-muted/20">
-                    <div className="text-2xl font-bold text-primary">3</div>
-                    <div className="text-sm text-muted-foreground">Countries</div>
-                  </div>
-                  <div className="p-4 rounded-lg bg-muted/20">
-                    <div className="text-2xl font-bold text-primary">48</div>
-                    <div className="text-sm text-muted-foreground">Days Active</div>
-                  </div>
-                </div>
-              </div>
-            </GlassCard>
+            <AccountState />
 
             {/* Premium */}
             <GlassCard className="border-primary/20 bg-gradient-to-br from-card/90 to-primary/5 p-6">

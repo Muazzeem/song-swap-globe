@@ -248,7 +248,7 @@ export function StatsPage() {
                     <div className="text-sm text-muted-foreground">Shared</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-primary">{stats.detailed_stats.songs_received}</div>
+                    <div className="text-2xl font-bold text-primary">{stats.songs_received}</div>
                     <div className="text-sm text-muted-foreground">Received</div>
                   </div>
                 </div>
