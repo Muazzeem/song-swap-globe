@@ -1,11 +1,13 @@
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
-import { Music, Mail, Lock, User, Briefcase, MapPin, Globe } from "lucide-react"
+import { Music, Mail, Lock, User, Briefcase, MapPin } from "lucide-react"
 import { PasswordResetModal } from "@/components/modals/PasswordResetModal"
 import { useAuth } from "@/contexts/AuthContext"
 import { useToast } from "@/hooks/use-toast"
+import { CountrySelect } from "@/components/ui/country-select"
 
 export function AuthForm() {
   const { login, register, isLoading } = useAuth()
@@ -46,7 +48,7 @@ export function AuthForm() {
         await register({
           email: formData.email,
           profession: formData.profession,
-          country: formData.country,
+          country: formData.country, // This will be the alpha_3 code
           city: formData.city,
           password1: formData.password1,
           password2: formData.password2,
@@ -116,17 +118,12 @@ export function AuthForm() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="relative">
-                        <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Country"
-                          value={formData.country}
-                          onChange={(e) => handleInputChange("country", e.target.value)}
-                          className="pl-10 h-12 bg-input/50 border-white/10 focus:border-primary/50"
-                          required
-                        />
-                      </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      <CountrySelect
+                        value={formData.country}
+                        onValueChange={(value) => handleInputChange("country", value)}
+                        placeholder="Select your country"
+                      />
                       <div className="relative">
                         <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
