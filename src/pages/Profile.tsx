@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
+import { CountrySelect } from "@/components/ui/country-select"
 import { Edit, Camera, Bell, Lock, HelpCircle, LogOut, Trash2, Loader2 } from "lucide-react"
 import { Navigation } from "@/components/Navigation"
 import { useAuth } from "@/contexts/AuthContext"
@@ -280,10 +282,10 @@ export function ProfilePage() {
                 {isEditing && (
                   <div className="space-y-4 pt-2">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                      <Input
+                      <CountrySelect
                         value={profile.country}
-                        onChange={(e) => setProfile({...profile, country: e.target.value})}
-                        placeholder="Country"
+                        onValueChange={(value) => setProfile({...profile, country: value})}
+                        placeholder="Select country..."
                         className="h-9"
                       />
                       <Input
