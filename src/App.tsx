@@ -12,6 +12,9 @@ import NotFound from "./pages/NotFound";
 import ProfilePage from "./pages/Profile";
 import StatsPage from "./pages/StatsPage";
 import LibraryPage from "./pages/LibraryPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import AboutPage from "./pages/AboutPage";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +47,9 @@ const App = () => (
                 <StatsPage />
               </AuthGuard>
             } />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
