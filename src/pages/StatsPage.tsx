@@ -6,6 +6,7 @@ import { Navigation } from "@/components/Navigation"
 import { useState } from "react"
 import { useStatistics } from "@/hooks/useStatistics"
 import { useToast } from "@/hooks/use-toast"
+import TopGenre from "@/components/TopGenre"
 
 // Country code to flag mapping
 const countryFlags: Record<string, string> = {
@@ -87,7 +88,6 @@ export function StatsPage() {
     )
   }
 
-  // Calculate genre distribution (mock data for now as it's not in the API response)
   const totalSongs = stats.songs_shared + stats.detailed_stats.songs_received
   const topGenres = [
     { genre: "Pop", count: Math.floor(totalSongs * 0.4), percentage: 40 },
@@ -110,7 +110,7 @@ export function StatsPage() {
         
         {/* Header */}
         <div className="pt-8 pb-6 text-center lg:text-left">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-3">Your Stats</h1>
+          <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-3">Your Stats</h1>
           <p className="text-muted-foreground text-lg">
             Your musical journey around the world
           </p>
@@ -122,7 +122,7 @@ export function StatsPage() {
               <Music className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
             <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
-              {stats.songs_shared}
+              {stats.songs_shared || 0}
             </div>
             <div className="text-sm text-muted-foreground">Songs Shared</div>
           </GlassCard>
@@ -132,7 +132,7 @@ export function StatsPage() {
               <Users className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
             <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
-              {stats.users_exchanged_with}
+              {stats.users_exchanged_with || 0} 
             </div>
             <div className="text-sm text-muted-foreground">People Connected</div>
           </GlassCard>
@@ -142,7 +142,7 @@ export function StatsPage() {
               <Globe className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
             <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
-              {stats.countries_involved}
+              {stats.countries_involved || 0}
             </div>
             <div className="text-sm text-muted-foreground">Countries</div>
           </GlassCard>
@@ -151,7 +151,7 @@ export function StatsPage() {
             <div className="text-3xl lg:text-4xl mb-2">🌍</div>
             <h3 className="font-semibold text-primary text-sm lg:text-base">Global Explorer</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              {stats.countries_involved} countries explored!
+              {stats.countries_involved || 0} countries explored!
             </p>
           </GlassCard>
         </div>
@@ -211,31 +211,6 @@ export function StatsPage() {
 
           {/* Right Column */}
           <div className="space-y-6">
-            {/* Top Genres */}
-            <GlassCard className="p-6">
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold flex items-center gap-3">
-                  <TrendingUp className="h-6 w-6 text-primary" />
-                  Popular Genres
-                </h2>
-                
-                <div className="space-y-4">
-                  {topGenres.map((genre) => (
-                    <div key={genre.genre} className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{genre.genre}</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">{genre.count} songs</span>
-                          <span className="text-sm font-medium text-primary">{genre.percentage}%</span>
-                        </div>
-                      </div>
-                      <Progress value={genre.percentage} className="h-3" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </GlassCard>
-
             {/* Additional stats card */}
             <GlassCard className="p-6 text-center bg-gradient-to-br from-card/90 to-accent/10">
               <div className="space-y-4">
@@ -253,6 +228,9 @@ export function StatsPage() {
                 </div>
               </div>
             </GlassCard>
+
+            {/* Top Genres */}
+            <TopGenre />
           </div>
         </div>
       </div>

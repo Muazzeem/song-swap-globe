@@ -29,40 +29,49 @@ export function LibraryPage() {
   
   const fetchSongs = async (url = null) => {
     try {
-      setLoading(true)
-      const apiUrl = `${import.meta.env.VITE_API_URL}/api/received-songs`
-      
+      setLoading(true);
+
+      const apiUrl = url || `${import.meta.env.VITE_API_URL}/api/received-songs?page=1&page_size=6`;
+
       const response = await fetch(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
-      })
-      
+      });
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
-      const data = await response.json()
-      
-      setReceivedSongs(data.results || [])
+
+      const data = await response.json();
+
+      setReceivedSongs(data.results || []);
+
+      const currentPage = (() => {
+        if (url) {
+          const page = new URL(url).searchParams.get('page');
+          return page ? parseInt(page) : 1;
+        }
+        return 1;
+      })();
+
       setPagination({
         count: data.count || 0,
         next: data.next,
         previous: data.previous,
-        currentPage: url && url.includes('page=') 
-          ? parseInt(new URL(url).searchParams.get('page')) 
-          : 1
-      })
-      
-      setError(null)
+        currentPage: currentPage,
+      });
+
+      setError(null);
     } catch (err) {
-      setError(err.message)
-      console.error('Error fetching songs:', err)
+      setError(err.message);
+      console.error('Error fetching songs:', err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
   
   useEffect(() => {
     fetchSongs()
@@ -159,7 +168,7 @@ export function LibraryPage() {
         
         {/* Header */}
         <div className="pt-8 pb-6 text-center lg:text-left">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-3 text-white">Your Library</h1>
+          <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-3">Your Library</h1>
           <p className="text-muted-foreground text-lg">
             Songs you've received from around the world
           </p>
@@ -172,7 +181,7 @@ export function LibraryPage() {
               <Music className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
             <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
-              {stats.songs_received}
+              {stats?.songs_received || 0}
             </div>
             <div className="text-sm text-muted-foreground">Songs Received</div>
           </GlassCard>
@@ -182,7 +191,7 @@ export function LibraryPage() {
               <Users className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
             <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
-              {stats.users_exchanged_with}
+              {stats?.users_exchanged_with || 0}
             </div>
             <div className="text-sm text-muted-foreground">People Connected</div>
           </GlassCard>
@@ -192,7 +201,7 @@ export function LibraryPage() {
               <Globe className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
             </div>
             <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">
-              {stats.countries_involved}
+              {stats?.countries_involved || 0}
             </div>
             <div className="text-sm text-muted-foreground">Countries</div>
           </GlassCard>
@@ -201,7 +210,7 @@ export function LibraryPage() {
             <div className="text-3xl lg:text-4xl mb-2">🌍</div>
             <h3 className="font-semibold text-primary text-sm lg:text-base">Global Explorer</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              {stats.countries_involved} countries explored!
+              {stats?.countries_involved || 0} countries explored!
             </p>
           </GlassCard>
         </div>
@@ -242,7 +251,7 @@ export function LibraryPage() {
                           
                           <div className="flex items-center space-x-3 text-sm text-muted-foreground mt-2">
                             <span className="flex items-center gap-1">
-                              <Briefcase className="h-3 w-3" />
+                              <Music className="h-3 w-3" />
                               {song.genre?.[0] || 'Unknown'}
                             </span>
                           </div>
@@ -252,7 +261,7 @@ export function LibraryPage() {
                       {/* Uploader Info */}
                       <div className="flex items-center space-x-3 p-3 bg-muted/20 rounded-lg">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src="" />
+                          <AvatarImage src={song.uploader.profile_image} />
                           <AvatarFallback className="text-xs bg-primary/20 text-primary">
                             {song.uploader.name.split(' ')[0][0]}
                           </AvatarFallback>
@@ -320,7 +329,7 @@ export function LibraryPage() {
           <div className="flex items-center justify-center space-x-4 mt-8">
             <Button
               variant="outline"
-              size="lg"
+              size="sm"
               onClick={handlePreviousPage}
               disabled={!pagination.previous || loading}
               className="bg-white/10 border-white/20 text-white hover:bg-white/20"
@@ -335,7 +344,7 @@ export function LibraryPage() {
             
             <Button
               variant="outline"
-              size="lg"
+              size="sm"
               onClick={handleNextPage}
               disabled={!pagination.next || loading}
               className="bg-white/10 border-white/20 text-white hover:bg-white/20"

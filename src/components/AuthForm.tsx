@@ -86,7 +86,6 @@ export function AuthForm() {
 
 
   const handleInputChange = (field: string, value: string) => {
-    console.log(field, value)
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 

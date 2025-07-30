@@ -1,17 +1,18 @@
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { CountrySelect } from "@/components/ui/country-select"
-import { Edit, Camera, Bell, Lock, HelpCircle, LogOut, Trash2, Loader2, Info } from "lucide-react"
+import { Edit, Camera, Bell, Lock, HelpCircle, LogOut, Trash2, Loader2, Info, Brain, Share2, Play, Star, CheckCircle, Award } from "lucide-react"
 import { Navigation } from "@/components/Navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal"
 import AccountState from "@/components/AccoutState"
 import { useNavigate } from "react-router-dom"
+import { useToast } from "@/components/ui/use-toast"
 
 export function ProfilePage() {
   const { user, logout, accessToken } = useAuth()
@@ -19,10 +20,12 @@ export function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile")
   const [currentPage, setCurrentPage] = useState("profile")
   const [loading, setLoading] = useState(true)
+  const fileInputRef = useRef(null)
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState("")
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
   const navigate = useNavigate();
+  const { toast } = useToast()
   
   const [profile, setProfile] = useState({
     uid: "",
@@ -71,38 +74,81 @@ export function ProfilePage() {
     }
   }
 
-  // Update profile data
   const updateProfile = async (updatedData) => {
+    try {
+      setUpdating(true);
+      setError("");
+      const token = accessToken;
+
+      if (!token) {
+        setError("No access token found");
+        return false;
+      }
+      const formData = new FormData();
+      Object.keys(updatedData).forEach(key => {
+        if (key === 'profile_image') return;
+
+        if (updatedData[key] !== null && updatedData[key] !== undefined) {
+          if (typeof updatedData[key] === 'boolean') {
+            formData.append(key, updatedData[key].toString());
+          } else {
+            formData.append(key, updatedData[key]);
+          }
+        }
+      });
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/profile/`, {
+        method: "PATCH",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update profile: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setProfile(data);
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been updated successfully.",
+      });
+      return true;
+    } catch (err) {
+      setError(err.message || "Failed to update profile");
+      console.error("Error updating profile:", err);
+      return false;
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append("profile_image", file)
+
     try {
       setUpdating(true)
       setError("")
-      const token = accessToken
-      
-      if (!token) {
-        setError("No access token found")
-        return false
-      }
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/profile/`, {
-        method: 'PUT',
+        method: "PATCH",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(updatedData)
+        body: formData,
       })
-
-      if (!response.ok) {
-        throw new Error(`Failed to update profile: ${response.status}`)
-      }
 
       const data = await response.json()
       setProfile(data)
-      return true
     } catch (err) {
-      setError(err.message || "Failed to update profile")
-      console.error("Error updating profile:", err)
-      return false
+      setError(err.message || "Image upload failed")
     } finally {
       setUpdating(false)
     }
@@ -149,6 +195,39 @@ export function ProfilePage() {
     return `${profile.first_name} ${profile.last_name}`.trim() || "User"
   }
 
+  const features = [
+    {
+      icon: <Brain className="w-5 h-5 text-purple-400" />,
+      title: "AI Fun Facts:",
+      description: "Get a cool, educational fact for every song you receive."
+    },
+    {
+      icon: <Share2 className="w-5 h-5 text-purple-400" />,
+      title: "Share Cards:",
+      description: "Post your received song cards to Instagram or Facebook Stories."
+    },
+    {
+      icon: <Play className="w-5 h-5 text-purple-400" />,
+      title: "30 Sends/Day:",
+      description: "Swap up to 30 songs daily."
+    },
+    {
+      icon: <Star className="w-5 h-5 text-purple-400" />,
+      title: "Top Artist:",
+      description: "See the most swapped artist of the day in Stats."
+    },
+    {
+      icon: <CheckCircle className="w-5 h-5 text-purple-400" />,
+      title: "Celebrity Mode:",
+      description: "Get songs from verified artists & influencers."
+    },
+    {
+      icon: <Award className="w-5 h-5 text-purple-400" />,
+      title: "Premium badge on your profile.",
+      description: ""
+    }
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 pb-24 pt-24">
@@ -184,7 +263,7 @@ export function ProfilePage() {
         
         {/* Header */}
         <div className="pt-8 pb-6 text-center lg:text-left">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-3">Profile</h1>
+          <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-3">Profile</h1>
           <p className="text-muted-foreground text-lg">
             Manage your account and preferences
           </p>
@@ -237,13 +316,23 @@ export function ProfilePage() {
                       </AvatarFallback>
                     </Avatar>
                     {isEditing && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="absolute -bottom-1 -right-1 h-7 w-7 p-0 rounded-full"
-                      >
-                        <Camera className="h-3 w-3" />
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="absolute -bottom-1 -right-1 h-7 w-7 p-0 rounded-full"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          <Camera className="h-3 w-3" />
+                        </Button>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleImageUpload}
+                        />
+                      </>
                     )}
                   </div>
                   
@@ -412,9 +501,19 @@ export function ProfilePage() {
               <div className="text-center space-y-4">
                 <div className="text-4xl">⭐</div>
                 <h3 className="text-xl font-semibold text-primary">Upgrade to Premium</h3>
-                <p className="text-sm text-muted-foreground">
-                  Get priority matching and see song history from all users
-                </p>
+                <div className="space-y-4 text-left">
+                  {features.map((feature, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      {feature.icon}
+                      <div className="flex-1">
+                        <span className="text-white font-medium">{feature.title}</span>
+                        {feature.description && (
+                          <span className="text-gray-300 ml-1">{feature.description}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 <Button className="w-full bg-gradient-primary h-10 text-white">
                   Subscribe
                 </Button>

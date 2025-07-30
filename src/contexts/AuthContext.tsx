@@ -41,9 +41,6 @@ interface RegisterData {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-// Replace with your actual API URL
-const API_BASE_URL = 'http://localhost:8000' // You'll need to replace this with your actual API URL
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
@@ -66,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login/`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login/`, { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (userData: RegisterData) => {
     setIsLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/signup/`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -149,9 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     // Clear all stored data
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-    localStorage.removeItem('user_data')
+    localStorage.clear()
     
     setUser(null)
     setAccessToken(null)

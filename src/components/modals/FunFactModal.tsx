@@ -29,9 +29,8 @@ export function FunFactModal({ isOpen, onClose, fact }: FunFactModalProps) {
           
           <div className="pt-8 pb-4">
             <DialogHeader className="text-center space-y-4">
-              <div className="text-4xl">🎵</div>
-              <DialogTitle className="text-xl font-bold text-primary">
-                Fun Fact
+              <DialogTitle className="text-2xl font-bold text-primary">
+                <div>🎵 Fun Fact</div>
               </DialogTitle>
             </DialogHeader>
             
@@ -49,7 +48,7 @@ export function FunFactModal({ isOpen, onClose, fact }: FunFactModalProps) {
               
               <Button
                 onClick={onClose}
-                className="w-full mt-6 bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                className="w-full mt-6 bg-gradient-primary hover:shadow-glow transition-all duration-300 text-white"
               >
                 Close
               </Button>

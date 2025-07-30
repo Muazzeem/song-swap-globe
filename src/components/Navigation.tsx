@@ -37,7 +37,7 @@ export function Navigation({ brandName = "Soundly" }: NavigationProps) {
           <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">{brandName.charAt(0)}</span>
           </div>
-          <span className="text-lg font-semibold text-foreground hidden sm:block">{brandName}</span>
+          <span className="text-lg bg-gradient-primary bg-clip-text text-transparent font-bold text-foreground hidden sm:block">{brandName}</span>
         </div>
 
         {/* Navigation Links */}

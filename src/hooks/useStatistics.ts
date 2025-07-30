@@ -53,7 +53,6 @@ const fetchStatistics = async (token: string): Promise<StatisticsData> => {
   if (!response.ok) {
     throw new Error('Failed to fetch statistics')
   }
-  console.log(response)
   return response.json()
 }
 

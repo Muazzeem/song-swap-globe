@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 interface CustomGoogleButtonProps {
     disabled?: boolean;
+    onSuccess?: (userData: any) => Promise<void>;
 }
 
 const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
@@ -35,22 +35,16 @@ interface Song {
 }
 
 interface MatchedUser {
+  city: string
+  country: string
+  name: string
   id: string
   email: string
-}
-
-interface ApiResponse {
-  message: string
-  song: Song
-  auto_matched: boolean
-  matched_with: {
-    song: Song
-    user: MatchedUser
-  }
+  profile_image_url: string
 }
 
 export function HomePage({ onNavigate }: HomePageProps) {
-  const { isAuthenticated, accessToken } = useAuth()
+  const { accessToken } = useAuth()
   const [activeTab, setActiveTab] = useState("dashboard")
   const [currentPage, setCurrentPage] = useState("dashboard")
   const [musicLink, setMusicLink] = useState("")
@@ -63,28 +57,27 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
 
   const handleSendSong = async () => {
-    if (!musicLink.trim()) return
-    
-    setIsLoading(true)
-    
+    if (!musicLink) return
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'YOUR_API_URL'}/api/songs/`, {
-        method: 'POST',
+      setIsLoading(true)
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-          url: musicLink.trim()
-        })
+        body: JSON.stringify({ url: musicLink.trim() }),
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errData = await response.json()
+        throw new Error(errData?.error || "Failed to send song")
       }
 
-      const data: ApiResponse = await response.json()
-      
+      const data = await response.json()
+
       if (data.auto_matched && data.matched_with) {
         setReceivedSong(data.matched_with.song)
         setMatchedUser(data.matched_with.user)
@@ -133,9 +126,6 @@ export function HomePage({ onNavigate }: HomePageProps) {
     return new Date(dateString).getFullYear()
   }
 
-  const getInitials = (email: string) => {
-    return email.split('@')[0].substring(0, 2).toUpperCase()
-  }
 
   const funFactData = receivedSong ? {
     title: "Song Info",
@@ -152,7 +142,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           setCurrentPage(tab)
         }} 
       />
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="max-w-xl mx-auto space-y-6">
         
         {/* Header with Menu */}
         <div className="flex items-center justify-between pb-4 pt-5">
@@ -161,7 +151,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <div className="p-2 rounded-lg bg-gradient-primary shadow-glow">
                 <Music className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                 Soundly
               </h1>
             </div>
@@ -223,7 +213,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <h2 className="text-lg font-semibold text-primary">
                   New Song Received!
                 </h2>
-                <Button 
+                <Button
+                  onClick={handlePlaySong}
                   size="sm"
                   variant="outline"
                   className="px-3 bg-gradient-primary hover:shadow-glow transition-all text-white duration-300"
@@ -246,21 +237,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   <div>
                     <h3 className="font-semibold">{receivedSong.title}</h3>
                     <p className="text-sm text-muted-foreground">{receivedSong.artist}</p>
-                    <p className="text-xs text-muted-foreground">{receivedSong.album}</p>
                   </div>
-                  
-                  {matchedUser && (
-                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage src="" />
-                        <AvatarFallback className="text-xs bg-primary/20">
-                          {getInitials(matchedUser.email)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span>{matchedUser.email.split('@')[0]}</span>
-                    </div>
-                  )}
-                  
                   <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Music className="h-3 w-3" />
@@ -273,16 +250,36 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   </div>
                 </div>
               </div>
-               
+
+              {matchedUser && (
+                <div className="flex items-center space-x-3 p-3 bg-muted/20 rounded-lg">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={matchedUser.profile_image_url} />
+                    <AvatarFallback className="text-md bg-primary/20 text-primary">
+                      {matchedUser.name.split(' ')[0][0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">
+                      {matchedUser.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {matchedUser.city}, {matchedUser.country}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="flex space-x-2">
                 {funFactData && (
                   <Button 
                     onClick={() => setShowFunFact(true)}
-                    className="flex-1 bg-primary/20 hover:bg-primary/30 text-primary hover:text-primary-glow"
+                    className="flex-1 bg-primary/50 hover:bg-primary/100 text-white"
                     variant="outline"
                   >
                     <Lightbulb className="mr-2 h-4 w-4" />
-                    Song Info
+                    Fun Fact
                   </Button>
                 )}
                 
