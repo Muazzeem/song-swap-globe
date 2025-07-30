@@ -1,6 +1,6 @@
 
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
@@ -17,8 +17,9 @@ type SignupStep = 'signup' | 'otp' | 'success'
 export default function SignupPage() {
   const { register, verifyOTP, resendOTP, isLoading } = useAuth()
   const { toast } = useToast()
-  const [currentStep, setCurrentStep] = useState<SignupStep>('signup')
+  const [currentStep, setCurrentStep] = useState<SignupStep>('success')
   const [registeredEmail, setRegisteredEmail] = useState("")
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: "",
     password1: "",
@@ -69,15 +70,7 @@ export default function SignupPage() {
   }
 
   const handleContinueFromSuccess = () => {
-    setFormData({
-      email: "",
-      password1: "",
-      password2: "",
-      profession: "",
-      country: "",
-      city: ""
-    })
-    setCurrentStep('signup')
+    navigate("/dashboard")
   }
 
   const handleGoogleLoginSuccess = async (userData: any) => {

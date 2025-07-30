@@ -112,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           password2: userData.password2,
         }),
       })
-      return response.json()
+      const data = await response.json()
     } catch (error) {
       console.error('Registration error:', error)
       throw error
@@ -138,7 +138,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!response.ok) {
         throw new Error('OTP verification failed')
       }
-
+      localStorage.clear()
       const data: AuthResponse = await response.json()
       
       // Store tokens and user data

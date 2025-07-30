@@ -25,12 +25,28 @@ export function PasswordResetModal({ isOpen, onClose }: PasswordResetModalProps)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/password/reset/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data?.detail || "Something went wrong")
+      }
+
       setIsEmailSent(true)
-    }, 2000)
+    } catch (error: any) {
+      console.error("Error sending reset email:", error.message)
+      alert(error.message || "Failed to send reset email.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleClose = () => {
@@ -106,7 +122,7 @@ export function PasswordResetModal({ isOpen, onClose }: PasswordResetModalProps)
               <div className="space-y-3">
                 <Button 
                   onClick={handleClose}
-                  className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                    className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all duration-300 text-white"
                 >
                   Done
                 </Button>
