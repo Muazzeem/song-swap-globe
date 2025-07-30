@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react'
 
 interface User {
@@ -24,7 +23,9 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (userData: RegisterData) => Promise<void>
+  register: (userData: RegisterData) => Promise<{ requiresOTP: boolean }>
+  verifyOTP: (email: string, otp: string) => Promise<void>
+  resendOTP: (email: string) => Promise<void>
   googleLogin: (userData: AuthResponse) => void
   logout: () => void
   accessToken: string | null
@@ -117,6 +118,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Registration failed')
       }
 
+      const data = await response.json()
+      
+      // Check if OTP verification is required
+      if (data.requires_otp || data.requiresOTP) {
+        return { requiresOTP: true }
+      }
+
+      // If no OTP required, store tokens and user data directly
+      if (data.access && data.refresh && data.user) {
+        localStorage.setItem('access_token', data.access)
+        localStorage.setItem('refresh_token', data.refresh)
+        localStorage.setItem('user_data', JSON.stringify(data.user))
+        
+        setAccessToken(data.access)
+        setUser(data.user)
+      }
+
+      return { requiresOTP: false }
+    } catch (error) {
+      console.error('Registration error:', error)
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const verifyOTP = async (email: string, otp: string) => {
+    setIsLoading(true)
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-email/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          otp
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('OTP verification failed')
+      }
+
       const data: AuthResponse = await response.json()
       
       // Store tokens and user data
@@ -127,10 +172,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAccessToken(data.access)
       setUser(data.user)
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error('OTP verification error:', error)
       throw error
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const resendOTP = async (email: string) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/resend-otp/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to resend OTP')
+      }
+    } catch (error) {
+      console.error('Resend OTP error:', error)
+      throw error
     }
   }
 
@@ -159,6 +225,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       login,
       register,
+      verifyOTP,
+      resendOTP,
       googleLogin,
       logout,
       accessToken

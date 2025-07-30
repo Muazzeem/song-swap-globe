@@ -1,20 +1,25 @@
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Music, Mail, Lock, User, Briefcase, MapPin } from "lucide-react"
 import { PasswordResetModal } from "@/components/modals/PasswordResetModal"
+import { OTPVerification } from "@/components/OTPVerification"
+import { VerificationSuccess } from "@/components/VerificationSuccess"
 import { useAuth } from "@/contexts/AuthContext"
 import { useToast } from "@/hooks/use-toast"
 import { CountrySelect } from "@/components/ui/country-select"
 import GoogleLoginButton from "./GoogleLoginButton"
 
+type AuthStep = 'auth' | 'otp' | 'success'
+
 export function AuthForm() {
-  const { login, register, isLoading } = useAuth()
+  const { login, register, verifyOTP, resendOTP, isLoading } = useAuth()
   const { toast } = useToast()
   const [isLogin, setIsLogin] = useState(true)
+  const [currentStep, setCurrentStep] = useState<AuthStep>('auth')
   const [showPasswordReset, setShowPasswordReset] = useState(false)
+  const [registeredEmail, setRegisteredEmail] = useState("")
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -46,7 +51,7 @@ export function AuthForm() {
           return
         }
 
-        await register({
+        const result = await register({
           email: formData.email,
           profession: formData.profession,
           country: formData.country,
@@ -55,10 +60,19 @@ export function AuthForm() {
           password2: formData.password2,
         })
 
-        toast({
-          title: "Success!",
-          description: "Account created successfully!",
-        })
+        if (result.requiresOTP) {
+          setRegisteredEmail(formData.email)
+          setCurrentStep('otp')
+          toast({
+            title: "Registration Successful!",
+            description: "Please check your email for the verification code.",
+          })
+        } else {
+          toast({
+            title: "Success!",
+            description: "Account created successfully!",
+          })
+        }
       }
     } catch (error) {
       toast({
@@ -67,6 +81,29 @@ export function AuthForm() {
         variant: "destructive"
       })
     }
+  }
+
+  const handleOTPVerificationSuccess = () => {
+    setCurrentStep('success')
+  }
+
+  const handleResendOTP = async () => {
+    await resendOTP(registeredEmail)
+  }
+
+  const handleContinueFromSuccess = () => {
+    // Reset form and redirect to dashboard
+    setCurrentStep('auth')
+    setIsLogin(true)
+    setFormData({
+      email: "",
+      password: "",
+      password1: "",
+      password2: "",
+      profession: "",
+      country: "",
+      city: ""
+    })
   }
 
   const handleGoogleLoginSuccess = async (userData: any) => {
@@ -84,11 +121,41 @@ export function AuthForm() {
     }
   };
 
-
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
+  // Show OTP verification step
+  if (currentStep === 'otp') {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/10">
+        <div className="w-full max-w-md">
+          <OTPVerification
+            email={registeredEmail}
+            onVerificationSuccess={handleOTPVerificationSuccess}
+            onResendOTP={handleResendOTP}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // Show success step
+  if (currentStep === 'success') {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/10">
+        <div className="w-full max-w-md">
+          <VerificationSuccess
+            onContinue={handleContinueFromSuccess}
+            userEmail={registeredEmail}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // Show main auth form
   return (
     <>
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/10">
@@ -249,7 +316,6 @@ export function AuthForm() {
               </div>
 
               <div className="space-y-3">
-
                 <GoogleLoginButton
                   onSuccess={handleGoogleLoginSuccess}
                   disabled={isLoading}
