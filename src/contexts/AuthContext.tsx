@@ -23,7 +23,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (userData: RegisterData) => Promise<{ requiresOTP: boolean }>
+  register: (userData: RegisterData) => Promise<void>
   verifyOTP: (email: string, otp: string) => Promise<void>
   resendOTP: (email: string) => Promise<void>
   googleLogin: (userData: AuthResponse) => void
@@ -48,7 +48,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check for stored tokens on app initialization
     const storedAccessToken = localStorage.getItem('access_token')
     const storedRefreshToken = localStorage.getItem('refresh_token')
     const storedUser = localStorage.getItem('user_data')
@@ -113,29 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           password2: userData.password2,
         }),
       })
-
-      if (!response.ok) {
-        throw new Error('Registration failed')
-      }
-
-      const data = await response.json()
-      
-      // Check if OTP verification is required
-      if (data.requires_otp || data.requiresOTP) {
-        return { requiresOTP: true }
-      }
-
-      // If no OTP required, store tokens and user data directly
-      if (data.access && data.refresh && data.user) {
-        localStorage.setItem('access_token', data.access)
-        localStorage.setItem('refresh_token', data.refresh)
-        localStorage.setItem('user_data', JSON.stringify(data.user))
-        
-        setAccessToken(data.access)
-        setUser(data.user)
-      }
-
-      return { requiresOTP: false }
+      return response.json()
     } catch (error) {
       console.error('Registration error:', error)
       throw error
@@ -147,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifyOTP = async (email: string, otp: string) => {
     setIsLoading(true)
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-email/`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-otp/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

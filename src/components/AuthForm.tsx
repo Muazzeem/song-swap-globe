@@ -41,7 +41,6 @@ export function AuthForm() {
           description: "You've been logged in successfully.",
         })
       } else {
-        // Validation for registration
         if (formData.password1 !== formData.password2) {
           toast({
             title: "Error",
@@ -59,20 +58,8 @@ export function AuthForm() {
           password1: formData.password1,
           password2: formData.password2,
         })
-
-        if (result.requiresOTP) {
-          setRegisteredEmail(formData.email)
-          setCurrentStep('otp')
-          toast({
-            title: "Registration Successful!",
-            description: "Please check your email for the verification code.",
-          })
-        } else {
-          toast({
-            title: "Success!",
-            description: "Account created successfully!",
-          })
-        }
+        setCurrentStep('otp')
+        setRegisteredEmail(formData.email)
       }
     } catch (error) {
       toast({
@@ -92,8 +79,6 @@ export function AuthForm() {
   }
 
   const handleContinueFromSuccess = () => {
-    // Reset form and redirect to dashboard
-    setCurrentStep('auth')
     setIsLogin(true)
     setFormData({
       email: "",
