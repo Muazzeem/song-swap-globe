@@ -1,6 +1,7 @@
 
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-import { AuthForm } from '@/components/AuthForm'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -8,6 +9,13 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const { isAuthenticated, isLoading, accessToken } = useAuth()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!isLoading && (!isAuthenticated || !accessToken)) {
+      navigate('/login')
+    }
+  }, [isAuthenticated, isLoading, accessToken, navigate])
 
   if (isLoading) {
     return (
@@ -17,9 +25,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
     )
   }
 
-  // Check both authentication status and token presence
   if (!isAuthenticated || !accessToken) {
-    return <AuthForm />
+    return null
   }
 
   return <>{children}</>
