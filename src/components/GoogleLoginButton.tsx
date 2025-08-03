@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { GoogleIdentityManager, GoogleCredentialResponse } from '@/utils/googleAuth';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CustomGoogleButtonProps {
     disabled?: boolean;
@@ -16,6 +17,7 @@ const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
     const { googleLogin } = useAuth();
+    const navigate = useNavigate()
 
     const handleGoogleLogin = async () => {
         if (loading) return;
@@ -106,6 +108,7 @@ const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({
             
             // Use the googleLogin method from AuthContext to store the response
             googleLogin(userData);
+            navigate("/dashboard")
 
             toast({
                 title: "Login Successful",

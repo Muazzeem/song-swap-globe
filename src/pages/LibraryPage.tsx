@@ -8,6 +8,23 @@ import { useAuth } from "@/contexts/AuthContext"
 import { ShareModal } from "@/components/modals/ShareModal"
 import { useStatistics } from "@/hooks/useStatistics"
 
+const Badge = ({ type }) => {
+  const badges = {
+    premium: { bg: 'bg-gradient-to-r from-yellow-400 to-orange-500', icon: '👑' },
+    artist: { bg: 'bg-gradient-to-r from-purple-500 to-pink-500', icon: '🎨' },
+    influencer: { bg: 'bg-gradient-to-r from-blue-500 to-cyan-500', icon: '⭐' },
+  };
+
+  const badge = badges[type];
+  if (!badge) return null;
+
+  return (
+    <div className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 ${badge.bg} rounded-full flex items-center justify-center border-2 border-white text-white text-xs font-bold shadow-lg`}>
+      {badge.icon}
+    </div>
+  );
+};
+
 export function LibraryPage() {
   const [activeTab, setActiveTab] = useState("library")
   const [currentPage, setCurrentPage] = useState("library")
@@ -100,12 +117,7 @@ export function LibraryPage() {
       return newLiked
     })
   }
-  
-  const formatDuration = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
+
   
   if (loading && receivedSongs.length === 0) {
     return (
@@ -260,12 +272,16 @@ export function LibraryPage() {
 
                       {/* Uploader Info */}
                       <div className="flex items-center space-x-3 p-3 bg-muted/20 rounded-lg">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={song.uploader.profile_image} />
-                          <AvatarFallback className="text-xs bg-primary/20 text-primary">
-                            {song.uploader.name.split(' ')[0][0]}
-                          </AvatarFallback>
-                        </Avatar>
+                        <div className="relative inline-block">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={song.uploader.profile_image} />
+                            <AvatarFallback className="text-xs bg-primary/20 text-primary">
+                              {song.uploader.name.split(' ')[0][0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          {/* Add badge based on uploader type */}
+                          <Badge type={song.uploader.type} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-white truncate">
                             {song.uploader.name}

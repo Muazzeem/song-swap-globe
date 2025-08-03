@@ -13,6 +13,26 @@ import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal"
 import AccountState from "@/components/AccoutState"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "@/components/ui/use-toast"
+import PremiumSubscriptionCard from "@/components/PremiumSubscription"
+import SubscriptionDetails from "@/components/SubscriptionDetails"
+
+
+const Badge = ({ type }) => {
+  const badges = {
+    premium: { bg: 'bg-yellow-500', icon: '👑' },
+    artist: { bg: 'bg-purple-500', icon: '🎨' },
+    influencer: { bg: 'bg-blue-500', icon: '⭐' },
+  };
+
+  const badge = badges[type];
+  if (!badge) return null;
+
+  return (
+    <div className={`absolute -bottom-1 -right-1 w-6 h-6 ${badge.bg} rounded-full flex items-center justify-center border-2 border-white text-white text-xs font-bold`}>
+      {badge.icon}
+    </div>
+  );
+};
 
 export function ProfilePage() {
   const { user, logout, accessToken } = useAuth()
@@ -37,7 +57,8 @@ export function ProfilePage() {
     email: "",
     profile_image: null,
     receive_notifications: true,
-    is_active_for_receiving: true
+    is_active_for_receiving: true,
+    type: "basic" // basic, premium, artist, influencer
   })
 
   // Fetch profile data from API
@@ -195,39 +216,6 @@ export function ProfilePage() {
     return `${profile.first_name} ${profile.last_name}`.trim() || "User"
   }
 
-  const features = [
-    {
-      icon: <Brain className="w-5 h-5 text-purple-400" />,
-      title: "AI Fun Facts:",
-      description: "Get a cool, educational fact for every song you receive."
-    },
-    {
-      icon: <Share2 className="w-5 h-5 text-purple-400" />,
-      title: "Share Cards:",
-      description: "Post your received song cards to Instagram or Facebook Stories."
-    },
-    {
-      icon: <Play className="w-5 h-5 text-purple-400" />,
-      title: "30 Sends/Day:",
-      description: "Swap up to 30 songs daily."
-    },
-    {
-      icon: <Star className="w-5 h-5 text-purple-400" />,
-      title: "Top Artist:",
-      description: "See the most swapped artist of the day in Stats."
-    },
-    {
-      icon: <CheckCircle className="w-5 h-5 text-purple-400" />,
-      title: "Celebrity Mode:",
-      description: "Get songs from verified artists & influencers."
-    },
-    {
-      icon: <Award className="w-5 h-5 text-purple-400" />,
-      title: "Premium badge on your profile.",
-      description: ""
-    }
-  ];
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 pb-24 pt-24">
@@ -315,6 +303,7 @@ export function ProfilePage() {
                         {getInitials()}
                       </AvatarFallback>
                     </Avatar>
+                    <Badge type={profile.type} />
                     {isEditing && (
                       <>
                         <Button
@@ -467,6 +456,7 @@ export function ProfilePage() {
                 </div>
               </div>
             </GlassCard>
+            <SubscriptionDetails />
             <GlassCard className="border-destructive/20 p-6 mt-5">
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-destructive">Account Actions</h2>
@@ -497,7 +487,9 @@ export function ProfilePage() {
             <AccountState />
 
             {/* Premium */}
-            <GlassCard className="border-primary/20 bg-gradient-to-br from-card/90 to-primary/5 p-6">
+            <PremiumSubscriptionCard />
+
+            {/* <GlassCard className="border-primary/20 bg-gradient-to-br from-card/90 to-primary/5 p-6">
               <div className="text-center space-y-4">
                 <div className="text-4xl">⭐</div>
                 <h3 className="text-xl font-semibold text-primary">Upgrade to Premium</h3>
@@ -518,7 +510,7 @@ export function ProfilePage() {
                   Subscribe
                 </Button>
               </div>
-            </GlassCard>
+            </GlassCard> */}
           </div>
         </div>
       </div>

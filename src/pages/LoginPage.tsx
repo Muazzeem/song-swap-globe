@@ -45,7 +45,6 @@ export default function LoginPage() {
         title: "Google Login Success",
         description: "Successfully logged in with Google!",
       });
-      navigate("/dashboard")
     } catch (error) {
       toast({
         title: "Login Failed",

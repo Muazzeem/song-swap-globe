@@ -20,7 +20,7 @@ const navItems = [
   { id: "profile", label: "Profile", icon: User, to: "/profile" },
 ];
 
-export function Navigation({ brandName = "Soundly" }: NavigationProps) {
+export function Navigation({ brandName = "SoundlyBeats" }: NavigationProps) {
   const location = useLocation();
   const { accessToken, logout } = useAuth();
 

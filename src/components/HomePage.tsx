@@ -152,7 +152,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <Music className="h-6 w-6 text-white" />
               </div>
               <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Soundly
+                SoundlyBeats
               </h1>
             </div>
             <p className="text-muted-foreground">

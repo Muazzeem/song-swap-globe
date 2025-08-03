@@ -17,7 +17,7 @@ type SignupStep = 'signup' | 'otp' | 'success'
 export default function SignupPage() {
   const { register, verifyOTP, resendOTP, isLoading } = useAuth()
   const { toast } = useToast()
-  const [currentStep, setCurrentStep] = useState<SignupStep>('success')
+  const [currentStep, setCurrentStep] = useState<SignupStep>('signup')
   const [registeredEmail, setRegisteredEmail] = useState("")
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
