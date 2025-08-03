@@ -1,9 +1,10 @@
+
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Send, Music, Play, ExternalLink, MapPin, Briefcase, Menu, Share2, Lightbulb, Loader2 } from "lucide-react"
+import { Send, Music, Play, ExternalLink, MapPin, Briefcase, Menu, Share2, Lightbulb, Loader2, AlertCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { FunFactModal } from "@/components/modals/FunFactModal"
 import { ShareModal } from "@/components/modals/ShareModal"
@@ -32,6 +33,16 @@ interface Song {
   uploader_email: string
   created_at: string
   updated_at: string
+  remaining_uploads?: number
+  uploader?: {
+    email: string
+    name: string
+    profession: string
+    country: string
+    city: string
+    profile_image: string
+    type: 'basic' | 'premium'
+  }
 }
 
 interface MatchedUser {
@@ -53,11 +64,27 @@ export function HomePage({ onNavigate }: HomePageProps) {
   const [showFunFact, setShowFunFact] = useState(false)
   const [showShare, setShowShare] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [remainingUploads, setRemainingUploads] = useState<number | null>(null)
+  const [userType, setUserType] = useState<'basic' | 'premium'>('basic')
   const { toast } = useToast()
 
+  const getUploadLimit = (type: 'basic' | 'premium') => {
+    return type === 'premium' ? 30 : 10
+  }
 
   const handleSendSong = async () => {
     if (!musicLink) return
+
+    // Check if user has remaining uploads
+    if (remainingUploads !== null && remainingUploads <= 0) {
+      const limit = getUploadLimit(userType)
+      toast({
+        title: "Upload Limit Reached",
+        description: `You've reached your daily limit of ${limit} songs. ${userType === 'basic' ? 'Upgrade to Premium for 30 uploads per day!' : 'Please try again tomorrow.'}`,
+        variant: "destructive"
+      })
+      return
+    }
 
     try {
       setIsLoading(true)
@@ -77,6 +104,16 @@ export function HomePage({ onNavigate }: HomePageProps) {
       }
 
       const data = await response.json()
+
+      // Update remaining uploads from response
+      if (data.song?.remaining_uploads !== undefined) {
+        setRemainingUploads(data.song.remaining_uploads)
+      }
+      
+      // Update user type from response
+      if (data.song?.uploader?.type) {
+        setUserType(data.song.uploader.type)
+      }
 
       if (data.auto_matched && data.matched_with) {
         setReceivedSong(data.matched_with.song)
@@ -133,6 +170,9 @@ export function HomePage({ onNavigate }: HomePageProps) {
     source: receivedSong.platform.name
   } : null
 
+  const uploadLimit = getUploadLimit(userType)
+  const isUploadLimitReached = remainingUploads !== null && remainingUploads <= 0
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 pb-24 pt-24">
       <Navigation 
@@ -166,23 +206,55 @@ export function HomePage({ onNavigate }: HomePageProps) {
         {/* Send Song Section */}
         <GlassCard>
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2 text-white">
-              <Send className="h-5 w-5 text-primary" />
-              <span className="text-primary">Send a Song</span>
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold flex items-center gap-2 text-white">
+                <Send className="h-5 w-5 text-primary" />
+                <span className="text-primary">Send a Song</span>
+              </h2>
+              
+              {remainingUploads !== null && (
+                <div className="flex items-center gap-2 text-sm">
+                  <span className={`${remainingUploads <= 2 ? 'text-red-400' : 'text-muted-foreground'}`}>
+                    {remainingUploads}/{uploadLimit} uploads left
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    userType === 'premium' 
+                      ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
+                      : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                  }`}>
+                    {userType.toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            {isUploadLimitReached && (
+              <div className="flex items-start gap-3 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-red-400">
+                    Daily Upload Limit Reached
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    You've uploaded {uploadLimit} songs today. 
+                    {userType === 'basic' ? ' Upgrade to Premium for 30 uploads per day!' : ' Please try again tomorrow.'}
+                  </p>
+                </div>
+              </div>
+            )}
             
             <div className="space-y-3">
               <Input
                 placeholder="Paste a music link from Spotify"
                 value={musicLink}
                 onChange={(e) => setMusicLink(e.target.value)}
-                disabled={isLoading}
+                disabled={isLoading || isUploadLimitReached}
                 className="h-12 bg-input/50 border-white/10 focus:border-primary/50"
               />
               
               <Button 
                 onClick={handleSendSong}
-                disabled={!musicLink.trim() || isLoading}
+                disabled={!musicLink.trim() || isLoading || isUploadLimitReached}
                 className="w-full h-12 bg-gradient-primary hover:shadow-glow transition-all text-white duration-300"
               >
                 {isLoading ? (
