@@ -1,10 +1,24 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Calendar, Clock, CreditCard, User, CheckCircle, XCircle } from 'lucide-react';
 import { GlassCard } from './ui/glass-card';
-
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './ui/alert-dialog';
+import { useToast } from './ui/use-toast';
 
 const SubscriptionInfo = () => {
+    const [isEndingSubscription, setIsEndingSubscription] = useState(false);
+    const { toast } = useToast();
+    
     const defaultSubscription = {
         id: 'sub_1234567890abcdef',
         user: {
@@ -23,7 +37,7 @@ const SubscriptionInfo = () => {
     const data = defaultSubscription;
 
     // Helper functions
-    const formatDate = (dateString) => {
+    const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
@@ -33,7 +47,7 @@ const SubscriptionInfo = () => {
         });
     };
 
-    const getSubscriptionTypeLabel = (type) => {
+    const getSubscriptionTypeLabel = (type: string) => {
         const types = {
             'MONTHLY': 'Monthly',
             'YEARLY': 'Yearly',
@@ -58,23 +72,45 @@ const SubscriptionInfo = () => {
     };
 
     const getStatusColor = () => {
-        return isSubscriptionActive() ? 'text-green-600' : 'text-red-600';
+        return isSubscriptionActive() ? 'text-green-500' : 'text-destructive';
     };
 
     const getStatusBgColor = () => {
-        return isSubscriptionActive() ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200';
+        return isSubscriptionActive() ? 'bg-green-500/10 border-green-500/20' : 'bg-destructive/10 border-destructive/20';
+    };
+
+    const handleEndSubscription = async () => {
+        setIsEndingSubscription(true);
+        
+        try {
+            // Simulate API call - replace with actual endpoint
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            toast({
+                title: "Subscription Ended",
+                description: "Your subscription has been successfully cancelled.",
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to end subscription. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsEndingSubscription(false);
+        }
     };
 
     return (
         <GlassCard className="p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gradient-primary">Subscription Details</h2>
+                <h2 className="text-2xl font-bold text-foreground">Subscription Details</h2>
                 <div className={`flex items-center px-3 py-1 rounded-full border ${getStatusBgColor()}`}>
                     {isSubscriptionActive() ? (
-                        <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
+                        <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                     ) : (
-                        <XCircle className="w-4 h-4 mr-2 text-red-600" />
+                        <XCircle className="w-4 h-4 mr-2 text-destructive" />
                     )}
                     <span className={`text-sm font-medium ${getStatusColor()}`}>
                         {isSubscriptionActive() ? 'Active' : 'Inactive'}
@@ -87,8 +123,8 @@ const SubscriptionInfo = () => {
                 {/* User Info */}
                 <div className="bg-muted/50 p-4 rounded-lg">
                     <div className="flex items-center mb-2">
-                        <User className="w-5 h-5 mr-2" />
-                        <h3 className="font-semibold bg-gradient-primary bg-clip-text text-transparent">Subscriber</h3>
+                        <User className="w-5 h-5 mr-2 text-primary" />
+                        <h3 className="font-semibold text-foreground">Subscriber</h3>
                     </div>
                     <p className="text-sm text-muted-foreground">{data.user.name}</p>
                     <p className="text-sm text-muted-foreground">{data.user.email}</p>
@@ -97,8 +133,8 @@ const SubscriptionInfo = () => {
                 {/* Subscription Type */}
                 <div className="bg-muted/50 p-4 rounded-lg">
                     <div className="flex items-center mb-2">
-                        <CreditCard className="w-5 h-5 mr-2" />
-                        <h3 className="font-semibold bg-gradient-primary bg-clip-text text-transparent">Plan Type</h3>
+                        <CreditCard className="w-5 h-5 mr-2 text-primary" />
+                        <h3 className="font-semibold text-foreground">Plan Type</h3>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         {getSubscriptionTypeLabel(data.type)}
@@ -111,20 +147,20 @@ const SubscriptionInfo = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="bg-muted/50 p-4 rounded-lg">
                     <div className="flex items-center mb-2">
-                        <Calendar className="w-5 h-5 mr-2" />
-                        <h3 className="font-semibold bg-gradient-primary bg-clip-text text-transparent">Start Date</h3>
+                        <Calendar className="w-5 h-5 mr-2 text-primary" />
+                        <h3 className="font-semibold text-foreground">Start Date</h3>
                     </div>
                     <p className="text-sm text-muted-foreground">{formatDate(data.start_date)}</p>
                 </div>
 
                 <div className="bg-muted/50 p-4 rounded-lg">
                     <div className="flex items-center mb-2">
-                        <Clock className="w-5 h-5 mr-2" />
-                        <h3 className="font-semibold bg-gradient-primary bg-clip-text text-transparent">End Date</h3>
+                        <Clock className="w-5 h-5 mr-2 text-primary" />
+                        <h3 className="font-semibold text-foreground">End Date</h3>
                     </div>
                     <p className="text-sm text-muted-foreground">{formatDate(data.end_date)}</p>
                     {isSubscriptionActive() && (
-                        <p className="text-orange-600 text-sm mt-1">
+                        <p className="text-orange-500 text-sm mt-1">
                             {getDaysRemaining()} days remaining
                         </p>
                     )}
@@ -132,27 +168,51 @@ const SubscriptionInfo = () => {
             </div>
 
             {/* Subscription ID */}
-            <div className="bg-muted/50 p-4 p-4 rounded-lg mb-6">
-                <h3 className="font-semibold mb-2 bg-gradient-primary bg-clip-text text-transparent">Subscription ID</h3>
+            <div className="bg-muted/50 p-4 rounded-lg mb-6">
+                <h3 className="font-semibold mb-2 text-foreground">Subscription ID</h3>
                 <p className="text-sm text-muted-foreground break-all">{data.subscription_id}</p>
             </div>
 
             {/* Additional Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-6">
                 <div>
-                    <span className="font-medium">Created:</span> {formatDate(data.created_at)}
+                    <span className="font-medium text-foreground">Created:</span> 
+                    <span className="text-muted-foreground ml-1">{formatDate(data.created_at)}</span>
                 </div>
                 <div>
-                    <span className="font-medium">Last Updated:</span> {formatDate(data.updated_at)}
+                    <span className="font-medium text-foreground">Last Updated:</span>
+                    <span className="text-muted-foreground ml-1">{formatDate(data.updated_at)}</span>
                 </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3 mt-6 pt-6">
+            <div className="flex flex-wrap gap-3 pt-6 border-t border-border">
                 {isSubscriptionActive() && (
-                    <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                        Cancel Subscription
-                    </button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <button className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors">
+                                End Subscription
+                            </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>End Subscription</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Are you sure you want to end your subscription? This action cannot be undone and you will lose access to premium features at the end of your current billing period.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleEndSubscription}
+                                    disabled={isEndingSubscription}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                    {isEndingSubscription ? "Ending..." : "End Subscription"}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 )}
             </div>
         </GlassCard>
